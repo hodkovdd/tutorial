@@ -7,6 +7,8 @@ using Microsoft.AspNet.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using tutorial.Models;
+using Microsoft.Data.Entity;
 
 namespace tutorial
 {
@@ -27,6 +29,12 @@ namespace tutorial
         public void ConfigureServices(IServiceCollection services)
         {
             // Add framework services.
+            services.AddEntityFramework()
+                    .AddSqlServer()
+                    .AddDbContext<MobileContext>(options =>
+                    {
+                        options.UseSqlServer(Configuration["Data:ConnectionString"]);
+                    });
             services.AddMvc();
         }
 
@@ -56,6 +64,7 @@ namespace tutorial
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
+            SampleData.Initialize(app.ApplicationServices);
         }
 
         // Entry point for the application.
